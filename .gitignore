@@ -1,0 +1,38 @@
+﻿# Videos
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+
+# Audio  
+*.wav
+*.mp3
+*.aac
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Large files
+*.zip
+*.tar.gz
