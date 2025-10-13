@@ -36,3 +36,6 @@ node_modules/
 # Large files
 *.zip
 *.tar.gz
+
+backend/*.md
+frontend/*.md
