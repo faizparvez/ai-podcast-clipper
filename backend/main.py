@@ -56,7 +56,7 @@ def create_vertical_video(
     tracks, scores, pyframes_path, pyavi_path, audio_path, output_path, framerate=25
 ):
     import ffmpegcv
-    
+
     target_width = 1080
     target_height = 1920
 
@@ -354,7 +354,9 @@ def process_clip(
     )
 
     s3_client = boto3.client("s3")
-    s3_client.upload_file(subtitle_output_path, "ai-podcast-clipper-faiz", output_s3_key)
+    s3_client.upload_file(
+        subtitle_output_path, "ai-podcast-clipper-faiz", output_s3_key
+    )
 
 
 @app.cls(
@@ -382,8 +384,7 @@ class AiPodcastClipper:
 
         print("Creating gemini client...")
         self.gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-        
-        
+
         print("Created gemini client...")
 
     def transcribe_video(self, base_dir: str, video_path: str) -> str:
@@ -427,7 +428,7 @@ class AiPodcastClipper:
 
     def identify_moments(self, transcript: dict):
         response = self.gemini_client.models.generate_content(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.5-flash",
             contents="""
     This is a podcast video transcript consisting of word, along with each words's start and end time. I am looking to create clips between a minimum of 30 and maximum of 60 seconds long. The clip should never exceed 60 seconds.
 
@@ -500,7 +501,9 @@ class AiPodcastClipper:
         print(clip_moments)
 
         # 3. Process clips
-        for index, moment in enumerate(clip_moments[:1]):  # the no here tells the no of clips we generate from the podcast
+        for index, moment in enumerate(
+            clip_moments[:3]
+        ):  # the no here tells the no of clips we generate from the podcast
             if "start" in moment and "end" in moment:
                 print(
                     "Processing clip"
@@ -533,7 +536,7 @@ def main():
 
     url = ai_podcast_clipper.process_video.get_web_url()
 
-    payload = {"s3_key": "test1/mi65min.mp4"}
+    payload = {"s3_key": "test2/mi630min.mp4"}
 
     headers = {"Content-Type": "application/json", "Authorization": "Bearer 123321"}
 
