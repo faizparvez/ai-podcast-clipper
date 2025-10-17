@@ -378,9 +378,9 @@ class AiPodcastClipper:
 
         print("Transcription models loaded...")
 
-    #     print("Creating gemini client...")
-    #     self.gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    #     print("Created gemini client...")
+        print("Creating gemini client...")
+        self.gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        print("Created gemini client...")
 
     def transcribe_video(self, base_dir: str, video_path: str) -> str:
         audio_path = base_dir / "audio.wav"
@@ -407,21 +407,19 @@ class AiPodcastClipper:
         duration = time.time() - start_time
         print("Transcription and alignment took " + str(duration) + " seconds")
 
-        print(json.dumps(result, indent=2))
+        segments = []
 
-    #     segments = []
+        if "word_segments" in result:
+            for word_segment in result["word_segments"]:
+                segments.append(
+                    {
+                        "start": word_segment["start"],
+                        "end": word_segment["end"],
+                        "word": word_segment["word"],
+                    }
+                )
 
-    #     if "word_segments" in result:
-    #         for word_segment in result["word_segments"]:
-    #             segments.append(
-    #                 {
-    #                     "start": word_segment["start"],
-    #                     "end": word_segment["end"],
-    #                     "word": word_segment["word"],
-    #                 }
-    #             )
-
-    #     return json.dumps(segments)
+        return json.dumps(segments)
 
     # def identify_moments(self, transcript: dict):
     #     response = self.gemini_client.models.generate_content(
@@ -476,10 +474,9 @@ class AiPodcastClipper:
         s3_client = boto3.client("s3")
         s3_client.download_file("ai-podcast-clipper-faiz", s3_key, str(video_path))
 
-        self.transcribe_video(base_dir, video_path)
         # # 1. Transcription
-        # transcript_segments_json = self.transcribe_video(base_dir, video_path)
-        # transcript_segments = json.loads(transcript_segments_json)
+        transcript_segments_json = self.transcribe_video(base_dir, video_path)
+        transcript_segments = json.loads(transcript_segments_json)
 
         # # 2. Identify moments for clips
         # print("Identifying clip moments")
