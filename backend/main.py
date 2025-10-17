@@ -52,14 +52,14 @@ mount_path = "/root/.cache/torch"
 auth_scheme = HTTPBearer()
 
 
-# def create_vertical_video(
-#     tracks, scores, pyframes_path, pyavi_path, audio_path, output_path, framerate=25
-# ):
-#     target_width = 1080
-#     target_height = 1920
+def create_vertical_video(
+    tracks, scores, pyframes_path, pyavi_path, audio_path, output_path, framerate=25
+):
+    target_width = 1080
+    target_height = 1920
 
-#     flist = glob.glob(os.path.join(pyframes_path, "*.jpg"))
-#     flist.sort()
+    flist = glob.glob(os.path.join(pyframes_path, "*.jpg"))
+    flist.sort()
 
 #     faces = [[] for _ in range(len(flist))]
 
@@ -333,16 +333,16 @@ def process_clip(
     with open(scores_path, "rb") as f:
         scores = pickle.load(f)
 
-#     cvv_start_time = time.time()
-#     create_vertical_video(
-#         tracks, scores, pyframes_path, pyavi_path, audio_path, vertical_mp4_path
-#     )
-#     cvv_end_time = time.time()
-#     print(
-#         f"Clip {clip_index} vertical video creation time: {cvv_end_time - cvv_start_time:.2f} seconds"
-#     )
+    cvv_start_time = time.time()
+    create_vertical_video(
+        tracks, scores, pyframes_path, pyavi_path, audio_path, vertical_mp4_path
+    )
+    cvv_end_time = time.time()
+    print(
+        f"Clip {clip_index} vertical video creation time: {cvv_end_time - cvv_start_time:.2f} seconds"
+    )
 
-#     create_subtitles_with_ffmpeg(
+#     cr  eate_subtitles_with_ffmpeg(
 #         transcript_segments,
 #         start_time,
 #         end_time,
