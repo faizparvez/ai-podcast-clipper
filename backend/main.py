@@ -524,19 +524,19 @@ class AiPodcastClipper:
         #     shutil.rmtree(base_dir, ignore_errors=True)
 
 
-# @app.local_entrypoint()
-# def main():
-#     import requests
+@app.local_entrypoint()
+def main():
+    import requests
 
-#     ai_podcast_clipper = AiPodcastClipper()
+    ai_podcast_clipper = AiPodcastClipper()
 
-#     url = ai_podcast_clipper.process_video.get_web_url()
+    url = ai_podcast_clipper.process_video.get_web_url()
 
-#     payload = {"s3_key": "test1/mi65min.mp4"}
+    payload = {"s3_key": "test1/mi65min.mp4"}
 
-#     headers = {"Content-Type": "application/json", "Authorization": "Bearer 123321"}
+    headers = {"Content-Type": "application/json", "Authorization": "Bearer 123321"}
 
-#     response = requests.post(url, json=payload, headers=headers)
-#     response.raise_for_status()
-#     result = response.json()
-#     print(result)
+    response = requests.post(url, json=payload, headers=headers)
+    response.raise_for_status()
+    result = response.json()
+    print(result)
