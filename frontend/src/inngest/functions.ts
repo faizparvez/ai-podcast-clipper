@@ -58,7 +58,7 @@ export const processVideo = inngest.createFunction(
             },
           });
         });
-
+        console.log(env.PROCESS_VIDEO_ENDPOINT);
         await step.run("call-modal-endpoint", async () => {
           await step.fetch(env.PROCESS_VIDEO_ENDPOINT, {
             method: "POST",
