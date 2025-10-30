@@ -14,11 +14,10 @@ export const processVideo = inngest.createFunction(
   },
   { event: "process-video-events" },
   async ({ event, step }) => {
-    const { uploadedFileId } = event.data;
-    // as {
-    //   uploadedFileId: string;
-    //   userId: string;
-    // };
+    const { uploadedFileId } = event.data as {
+      uploadedFileId: string;
+      userId: string;
+    };
 
     try {
       const { userId, credits, s3Key } = await step.run(
@@ -131,8 +130,7 @@ export const processVideo = inngest.createFunction(
           });
         });
       }
-    } 
-    catch (error: unknown) {
+    } catch (error: unknown) {
       await db.uploadedFile.update({
         where: {
           id: uploadedFileId,
