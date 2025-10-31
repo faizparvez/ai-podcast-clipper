@@ -99,6 +99,9 @@ export const processVideo = inngest.createFunction(
             return {
               debug: debugInfo,
               error: String(error),
+              errorName: error instanceof Error ? error.name : "Unknown",
+              errorMessage:
+                error instanceof Error ? error.message : String(error),
             };
           }
         });
