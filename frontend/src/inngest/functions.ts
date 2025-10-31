@@ -13,8 +13,12 @@ export const processVideo = inngest.createFunction(
     },
   },
   { event: "process-video-events" },
-  async ({ event, step, logger }) => {
+  async ({ event, step }) => {
     const { uploadedFileId } = event.data;
+    // as {
+    //   uploadedFileId: string;
+    //   userId: string;
+    // };
 
     try {
       const { userId, credits, s3Key } = await step.run(
@@ -56,32 +60,37 @@ export const processVideo = inngest.createFunction(
         });
 
         const result = await step.run("call-modal-endpoint", async () => {
-          logger.info("ENDPOINT URL: " + env.PROCESS_VIDEO_ENDPOINT);
-          logger.info("AUTH TOKEN EXISTS: " + !!env.PROCESS_VIDEO_ENDPOINT_AUTH);
-          logger.info("S3 KEY: " + s3Key);
-          
-          const response = await fetch(env.PROCESS_VIDEO_ENDPOINT, {
-            method: "POST",
-            body: JSON.stringify({ s3_key: s3Key }),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${env.PROCESS_VIDEO_ENDPOINT_AUTH}`,
-            },
-          });
-          
-          logger.info("RESPONSE STATUS: " + response.status);
-          
-          const text = await response.text();
-          logger.info("RESPONSE BODY: " + text);
-          
-          if (!response.ok) {
-            throw new Error(`Modal failed with status ${response.status}`);
+          const debugInfo = {
+            url: env.PROCESS_VIDEO_ENDPOINT,
+            hasAuth: !!env.PROCESS_VIDEO_ENDPOINT_AUTH,
+            s3Key: s3Key,
+          };
+
+          try {
+            const response = await fetch(env.PROCESS_VIDEO_ENDPOINT, {
+              method: "POST",
+              body: JSON.stringify({ s3_key: s3Key }),
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${env.PROCESS_VIDEO_ENDPOINT_AUTH}`,
+              },
+            });
+
+            const text = await response.text();
+
+            return {
+              debug: debugInfo,
+              status: response.status,
+              body: text,
+              success: response.ok,
+            };
+          } catch (error) {
+            return {
+              debug: debugInfo,
+              error: String(error),
+            };
           }
-          
-          return text ? JSON.parse(text) : null;
         });
-        
-        logger.info("MODAL RESULT: " + JSON.stringify(result));
 
         const { clipsFound } = await step.run(
           "create-clips-in-db",
@@ -145,7 +154,6 @@ export const processVideo = inngest.createFunction(
         });
       }
     } catch (error: unknown) {
-      logger.error("Error processing video:", error);
       await db.uploadedFile.update({
         where: {
           id: uploadedFileId,
