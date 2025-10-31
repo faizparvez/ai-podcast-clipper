@@ -13,12 +13,8 @@ export const processVideo = inngest.createFunction(
     },
   },
   { event: "process-video-events" },
-  async ({ event, step }) => {
-    const { uploadedFileId } = event.data 
-    // as {
-    //   uploadedFileId: string;
-    //   userId: string;
-    // };
+  async ({ event, step, logger }) => {
+    const { uploadedFileId } = event.data;
 
     try {
       const { userId, credits, s3Key } = await step.run(
@@ -58,48 +54,6 @@ export const processVideo = inngest.createFunction(
             },
           });
         });
-        export const processVideo = inngest.createFunction(
-  {
-    id: "process-video",
-    retries: 1,
-    concurrency: {
-      limit: 1,
-      key: "event.data.userId",
-    },
-  },
-  { event: "process-video-events" },
-  async ({ event, step, logger }) => {  // ← Make sure 'logger' is here!
-    const { uploadedFileId } = event.data;
-
-    try {
-      const { userId, credits, s3Key } = await step.run(
-        "check-credits",
-        async () => {
-          const uploadedFile = await db.uploadedFile.findUniqueOrThrow({
-            where: { id: uploadedFileId },
-            select: {
-              user: { select: { id: true, credits: true } },
-              s3Key: true,
-            },
-          });
-
-          return {
-            userId: uploadedFile.user.id,
-            credits: uploadedFile.user.credits,
-            s3Key: uploadedFile.s3Key,
-          };
-        },
-      );
-
-      if (credits > 0) {
-        await step.run("set-status-processing", async () => {
-          await db.uploadedFile.update({
-            where: { id: uploadedFileId },
-            data: { status: "processing" },
-          });
-
-          return {message : "checked"}
-        });
 
         const result = await step.run("call-modal-endpoint", async () => {
           logger.info("ENDPOINT URL: " + env.PROCESS_VIDEO_ENDPOINT);
@@ -128,7 +82,6 @@ export const processVideo = inngest.createFunction(
         });
         
         logger.info("MODAL RESULT: " + JSON.stringify(result));
-
 
         const { clipsFound } = await step.run(
           "create-clips-in-db",
@@ -192,6 +145,7 @@ export const processVideo = inngest.createFunction(
         });
       }
     } catch (error: unknown) {
+      logger.error("Error processing video:", error);
       await db.uploadedFile.update({
         where: {
           id: uploadedFileId,
