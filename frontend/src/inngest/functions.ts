@@ -14,7 +14,7 @@ export const processVideo = inngest.createFunction(
   },
   { event: "process-video-events" },
   async ({ event, step }) => {
-    const { uploadedFileId } = event.data 
+    const { uploadedFileId } = event.data;
     // as {
     //   uploadedFileId: string;
     //   userId: string;
@@ -60,14 +60,38 @@ export const processVideo = inngest.createFunction(
         });
         console.log(env.PROCESS_VIDEO_ENDPOINT);
         await step.run("call-modal-endpoint", async () => {
-          await step.fetch(env.PROCESS_VIDEO_ENDPOINT, {
+          const url = env.PROCESS_VIDEO_ENDPOINT;
+          const auth = env.PROCESS_VIDEO_ENDPOINT_AUTH;
+
+          console.log("=== DEBUG INFO ===");
+          console.log("URL:", url);
+          console.log("Auth token:", auth);
+          console.log("S3 Key:", s3Key);
+
+          if (!url || !auth) {
+            throw new Error("Missing environment variables!");
+          }
+
+          const response = await step.fetch(url, {
             method: "POST",
             body: JSON.stringify({ s3_key: s3Key }),
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${env.PROCESS_VIDEO_ENDPOINT_AUTH}`,
+              Authorization: `Bearer ${auth}`,
             },
           });
+
+          console.log("Response status:", response.status);
+          const responseText = await response.text();
+          console.log("Response body:", responseText);
+
+          if (!response.ok) {
+            throw new Error(
+              `Modal request failed: ${response.status} - ${responseText}`,
+            );
+          }
+
+          return JSON.parse(responseText);
         });
 
         const { clipsFound } = await step.run(
