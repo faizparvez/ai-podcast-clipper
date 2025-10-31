@@ -59,6 +59,17 @@ export const processVideo = inngest.createFunction(
           });
         });
 
+        // ADD THIS NEW STEP TO CHECK ENV VARS
+        const envCheck = await step.run("check-env-vars", async () => {
+          return {
+            PROCESS_VIDEO_ENDPOINT: env.PROCESS_VIDEO_ENDPOINT ?? "UNDEFINED",
+            PROCESS_VIDEO_ENDPOINT_AUTH_EXISTS:
+              !!env.PROCESS_VIDEO_ENDPOINT_AUTH,
+            PROCESS_VIDEO_ENDPOINT_AUTH_VALUE:
+              env.PROCESS_VIDEO_ENDPOINT_AUTH ?? "UNDEFINED",
+          };
+        });
+
         const result = await step.run("call-modal-endpoint", async () => {
           const debugInfo = {
             url: env.PROCESS_VIDEO_ENDPOINT,
