@@ -14,7 +14,7 @@ interface DemoClip {
 }
 
 const S3_BUCKET_URL = env.NEXT_PUBLIC_S3_BUCKET_URL;
-console.log(`${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`);
+// console.log(`${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`);
 const demoClips: DemoClip[] = [
   {
     id: "demo-1",
