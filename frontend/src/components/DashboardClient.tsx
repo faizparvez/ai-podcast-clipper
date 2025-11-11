@@ -38,10 +38,12 @@ import { ClipDisplay } from "./ClipDisplay";
 import { motion } from "framer-motion";
 import { Footer } from "./Footer";
 import { ProcessingLoader } from "./ProcessingLoader";
+import { env } from "~/env";
 
+const S3_BUCKET_URL = env.NEXT_PUBLIC_S3_BUCKET_URL;
 const DEMO_PODCAST = {
   filename: "billGatesPodcast.mp4",
-  path: "/demo/billGatesPodcast.mp4",
+  path: `${S3_BUCKET_URL}/test1/demo/billGatesPodcast.mp4`,
   displayName: "Bill Gates | Raj Shamani (6 min demo)",
 };
 
@@ -144,40 +146,62 @@ export function DashboardClient({
     }
   };
 
-  const handleTryDemo = () => {
-    // Load the demo file from public folder
-    fetch(DEMO_PODCAST.path)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const file = new File([blob], DEMO_PODCAST.filename, {
-          type: "video/mp4",
-        });
-        setFiles([file]);
-
-        // Scroll to the Generate Clips button
-        setTimeout(() => {
-          const generateButton = document.querySelector(
-            "[data-generate-clips-button]",
-          );
-          if (generateButton) {
-            generateButton.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          }
-        }, 100);
-
-        toast.success("Demo podcast loaded!", {
-          description:
-            "Review the file and click 'Generate Clips' to try our AI.",
-          duration: 5000,
-        });
-      })
-      .catch(() => {
-        toast.error("Failed to load demo", {
-          description: "Please try uploading your own file instead.",
-        });
+  
+  const handleTryDemo = async () => {
+    try {
+      setUploading(true);
+      
+      toast.loading("Loading demo podcast...", {
+        id: "demo-loading",
+        duration: Infinity,
       });
+
+      // Fetch the demo file from S3
+      const response = await fetch(DEMO_PODCAST.path);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch demo: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const file = new File([blob], DEMO_PODCAST.filename, {
+        type: "video/mp4",
+      });
+      
+      setFiles([file]);
+
+      toast.dismiss("demo-loading");
+      
+      toast.success("Demo podcast loaded!", {
+        description: "Review the file and click 'Generate Clips' to try our AI.",
+        duration: 5000,
+      });
+
+      // Scroll to the Generate Clips button
+      setTimeout(() => {
+        const generateButton = document.querySelector(
+          "[data-generate-clips-button]",
+        );
+        if (generateButton) {
+          generateButton.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }, 100);
+
+    } catch (error) {
+      console.error("Demo load error:", error);
+      
+      toast.dismiss("demo-loading");
+      
+      toast.error("Failed to load demo", {
+        description: "Please check your internet connection or try uploading your own file.",
+        duration: 5000,
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handlePreviewDemo = () => {
