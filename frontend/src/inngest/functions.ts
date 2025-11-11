@@ -15,10 +15,6 @@ export const processVideo = inngest.createFunction(
   { event: "process-video-events" },
   async ({ event, step }) => {
     const { uploadedFileId } = event.data;
-    // as {
-    //   uploadedFileId: string;
-    //   userId: string;
-    // };
 
     try {
       const { userId, credits, s3Key } = await step.run(
@@ -176,6 +172,7 @@ export const processVideo = inngest.createFunction(
           status: "failed",
         },
       });
+      throw error; // Re-throw to let Inngest handle retries
     }
   },
 );
