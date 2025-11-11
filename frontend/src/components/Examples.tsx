@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import { env } from "~/env";
 
 // Demo clips data
 interface DemoClip {
@@ -12,23 +13,25 @@ interface DemoClip {
   description?: string;
 }
 
+const S3_BUCKET_URL = env.NEXT_PUBLIC_S3_BUCKET_URL;
+console.log(`${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`);
 const demoClips: DemoClip[] = [
   {
     id: "demo-1",
     title: "Entrepreneurship Insights",
-    videoUrl: "/demo-clips/clip-1.mp4",
+    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`,
     description: "Key moments from startup founder interview",
   },
   {
     id: "demo-2",
     title: "Marketing Strategy",
-    videoUrl: "/demo-clips/clip-2.mp4",
+    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-2.mp4`,
     description: "Viral marketing tactics revealed",
   },
   {
     id: "demo-3",
     title: "Productivity Tips",
-    videoUrl: "/demo-clips/clip-3.mp4",
+    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-3.mp4`,
     description: "Time management secrets from experts",
   },
 ];
