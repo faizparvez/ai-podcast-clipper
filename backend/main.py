@@ -502,7 +502,7 @@ class AiPodcastClipper:
 
         # 3. Process clips
         for index, moment in enumerate(
-            clip_moments[:3]
+            clip_moments[:1]
         ):  # the no here tells the no of clips we generate from the podcast
             if "start" in moment and "end" in moment:
                 print(
