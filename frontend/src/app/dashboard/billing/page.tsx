@@ -184,11 +184,11 @@ function HowCreditsWork() {
   const steps = [
     {
       number: 1,
-      text: "1 credit = 1 minute of podcast processing",
+      text: "1 credit = 1 clip generated from a podcast",
     },
     {
       number: 2,
-      text: "The program will create around 1 clip per 5 minutes of podcast",
+      text: "The program will create 1 clip at a time",
     },
     {
       number: 3,
