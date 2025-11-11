@@ -1,0 +1,60 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Blue gradient for the box -->
+    <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#183EC2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#001E80;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- White gradient for the logo -->
+    <linearGradient id="vGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Blue rounded box background -->
+  <rect 
+    x="0" 
+    y="0" 
+    width="40" 
+    height="40" 
+    rx="8" 
+    ry="8" 
+    fill="url(#boxGradient)"
+  />
+  
+  <!-- Logo centered in the box (scaled and translated) -->
+  <g transform="translate(8, 8)">
+    <!-- Complete A shape behind -->
+    <path
+      d="M6 22 L12 4 L18 22"
+      stroke="url(#vGradient)"
+      stroke-width="3"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      opacity="0.5"
+    />
+    
+    <!-- Horizontal bar of A -->
+    <path
+      d="M8.5 15 L15.5 15"
+      stroke="url(#vGradient)"
+      stroke-width="2.5"
+      fill="none"
+      stroke-linecap="round"
+      opacity="0.6"
+    />
+    
+    <!-- V Shape on top -->
+    <path
+      d="M4 8 L12 22 L20 8"
+      stroke="url(#vGradient)"
+      stroke-width="3"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>
