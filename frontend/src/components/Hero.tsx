@@ -227,19 +227,6 @@ export const Hero = () => {
             initial="initial"
             animate="animate"
           >
-            {/* 
-              📸 DASHBOARD PREVIEW IMAGE - REPLACE THIS:
-              
-              1. Take a full screenshot of your dashboard (recommended size: 1920x1080 or higher)
-              2. Save it as: /public/screenshots/dashboard-hero.png
-              3. The image will automatically show up here!
-              
-              Tips for best screenshot:
-              - Show your upload interface or processing status
-              - Include some demo data/clips
-              - Make sure UI looks clean and professional
-              - Capture at high resolution for retina displays
-            */}
             <div className="w-full overflow-hidden rounded-2xl border border-[#F1F1F1] bg-white shadow-[0_20px_60px_rgba(24,62,194,0.15)]">
               {/* Browser Chrome */}
               <div className="bg-gradient-to-br from-[#183EC2] to-[#001E80] px-6 py-4">
@@ -250,8 +237,8 @@ export const Hero = () => {
                 </div>
               </div>
 
-              {/* Dashboard Content - Image or Fallback */}
-              <div className="relative aspect-video bg-[#EAEEFE]">
+              {/* Dashboard Content - Adjusted aspect ratio for your clips gallery */}
+              <div className="relative w-full" style={{ aspectRatio: '16/11' }}>
                 <Image
                   src="/screenshots/dashboard-hero.png"
                   alt="ClipMind Dashboard"
@@ -262,7 +249,7 @@ export const Hero = () => {
                 />
 
                 {/* Fallback placeholder - Shows if image is not found */}
-                <div className="absolute inset-0 flex items-center justify-center bg-[#EAEEFE] p-8">
+                {/* <div className="absolute inset-0 flex items-center justify-center bg-[#EAEEFE] p-8">
                   <div className="text-center">
                     <svg
                       className="mx-auto h-24 w-24 text-[#183EC2]/30"
@@ -284,7 +271,7 @@ export const Hero = () => {
                       Replace with: /screenshots/dashboard-hero.png
                     </p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </motion.div>
