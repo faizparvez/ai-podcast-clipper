@@ -157,9 +157,8 @@ function WorkflowStep({ step, index, isReversed }: WorkflowStepProps) {
           ))}
         </ul>
       </motion.div>
-
-      {/* Image Side - Professional SaaS Style */}
-      {/* Image Side - Professional SaaS Style */}
+            
+{/* Image Side - Professional SaaS Style */}
 <motion.div
   className={isReversed ? "lg:col-start-1" : ""}
   variants={imageVariants}

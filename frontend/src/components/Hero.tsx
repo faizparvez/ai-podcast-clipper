@@ -1,20 +1,13 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 export const Hero = () => {
   const sectionRef = useRef(null);
   const highlightTextRef = useRef(null);
   const [underlineWidth, setUnderlineWidth] = useState(0);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const translateY = useTransform(scrollYProgress, [0, 1], [150, -150]);
 
   // Calculate the width of the highlighted text for animation
   useEffect(() => {
@@ -248,30 +241,6 @@ export const Hero = () => {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                 />
 
-                {/* Fallback placeholder - Shows if image is not found */}
-                {/* <div className="absolute inset-0 flex items-center justify-center bg-[#EAEEFE] p-8">
-                  <div className="text-center">
-                    <svg
-                      className="mx-auto h-24 w-24 text-[#183EC2]/30"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <p className="mt-4 font-medium text-[#010D3E]/60">
-                      ClipMind Dashboard Preview
-                    </p>
-                    <p className="mt-2 text-sm text-[#010D3E]/40">
-                      Replace with: /screenshots/dashboard-hero.png
-                    </p>
-                  </div>
-                </div> */}
               </div>
             </div>
           </motion.div>
