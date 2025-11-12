@@ -8,7 +8,7 @@ interface WorkflowStep {
   title: string;
   description: string;
   features: string[];
-  imagePlaceholder: string; // For easy image replacement
+  imagePlaceholder: string;
 }
 
 export function Workflow() {
@@ -22,7 +22,7 @@ export function Workflow() {
         "Drag & drop or click to browse",
         "Try demo podcast to see it in action",
       ],
-      imagePlaceholder: "/screenshots/upload-step.png", // Replace with your actual screenshot
+      imagePlaceholder: "/screenshots/upload-step.png",
     },
     {
       title: "AI Analyzes Your Content",
@@ -33,18 +33,7 @@ export function Workflow() {
         "Identifies engaging segments",
         "Processes in 2-3 minutes",
       ],
-      imagePlaceholder: "/screenshots/ai-analysis-step.png", // Replace with your actual screenshot
-    },
-    {
-      title: "Track Processing in Real-Time",
-      description:
-        "Watch your video progress through every step with our detailed status tracker. See AI warmup, clip generation, and database storage happen in real-time.",
-      features: [
-        "7-step processing pipeline",
-        "Real-time progress updates",
-        "Estimated time remaining",
-      ],
-      imagePlaceholder: "/screenshots/processing-step.png", // Replace with your actual screenshot
+      imagePlaceholder: "/screenshots/ai-analysis-step.png",
     },
     {
       title: "Download Your Clips",
@@ -55,7 +44,7 @@ export function Workflow() {
         "Secure cloud storage in S3",
         "View all clips in dashboard",
       ],
-      imagePlaceholder: "/screenshots/clips-ready-step.png", // Replace with your actual screenshot
+      imagePlaceholder: "/screenshots/clips-ready-step.png",
     },
   ];
 
@@ -125,7 +114,7 @@ function WorkflowStep({ step, index, isReversed }: WorkflowStepProps) {
   return (
     <div
       ref={ref}
-      className={`grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12 ${
+      className={`grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12 overflow-hidden ${
         isReversed ? "lg:grid-flow-dense" : ""
       }`}
     >
@@ -169,63 +158,34 @@ function WorkflowStep({ step, index, isReversed }: WorkflowStepProps) {
         </ul>
       </motion.div>
 
-      {/* Image Side - EASY TO REPLACE */}
-      <motion.div
-        className={isReversed ? "lg:col-start-1" : ""}
-        variants={imageVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-      >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#F1F1F1] bg-white shadow-[0_20px_60px_rgba(24,62,194,0.15)]">
-          {/* 
-            📸 REPLACE THIS IMAGE: 
-            1. Take a screenshot of your actual feature
-            2. Save it in /public/screenshots/ folder
-            3. Update the src path in imagePlaceholder above
-            
-            Example paths:
-            - /screenshots/upload-step.png
-            - /screenshots/ai-analysis-step.png
-            - /screenshots/processing-step.png
-            - /screenshots/clips-ready-step.png
-          */}
-          <Image
-            src={step.imagePlaceholder}
-            alt={step.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={index === 0}
-          />
-
-          {/* Fallback: Show placeholder if image not found */}
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#183EC2]/10 to-[#001E80]/10">
-            <div className="p-8 text-center">
-              <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#183EC2] to-[#001E80]">
-                <svg
-                  className="h-10 w-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm font-medium text-[#010D3E]/50">
-                Replace with screenshot
-              </p>
-              <p className="mt-1 text-xs text-[#010D3E]/40">
-                {step.imagePlaceholder}
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/* Image Side - Professional SaaS Style */}
+      {/* Image Side - Professional SaaS Style */}
+<motion.div
+  className={isReversed ? "lg:col-start-1" : ""}
+  variants={imageVariants}
+  initial="hidden"
+  animate={isInView ? "visible" : "hidden"}
+>
+  {/* Outer container with white background and border */}
+  <div className="relative w-full overflow-hidden rounded-2xl border-10 border-[#183EC2] bg-white shadow-[0_8px_30px_rgba(24,62,194,0.12)]">
+    
+    {/* Inner image container - fills available space */}
+    <div className="relative w-full h-[400px] md:h-[450px] lg:h-[500px]">
+      <Image
+        src={step.imagePlaceholder}
+        alt={step.title}
+        fill
+        className="rounded-lg object-cover"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+        quality={95}
+        priority={index === 0}
+      />
+    </div>
+    
+    {/* Subtle inner shadow for depth */}
+    <div className="pointer-events-none absolute inset-4 rounded-lg ring-1 ring-inset ring-black/5"></div>
+  </div>
+</motion.div>
     </div>
   );
 }
