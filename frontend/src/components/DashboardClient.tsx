@@ -38,9 +38,8 @@ import { ClipDisplay } from "./ClipDisplay";
 import { motion } from "framer-motion";
 import { Footer } from "./Footer";
 import { ProcessingLoader } from "./ProcessingLoader";
-import { env } from "~/env";
+import { S3_BUCKET_URL } from "~/constants";
 
-const S3_BUCKET_URL = env.NEXT_PUBLIC_S3_BUCKET_URL;
 const DEMO_PODCAST = {
   filename: "billGatesPodcast.mp4",
   path: `${S3_BUCKET_URL}/test1/demo/billGatesPodcast.mp4`,

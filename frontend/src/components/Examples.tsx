@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { env } from "~/env";
+import { S3_BUCKET_URL } from "~/constants";
 
 // Demo clips data
 interface DemoClip {
@@ -13,7 +13,6 @@ interface DemoClip {
   description?: string;
 }
 
-const S3_BUCKET_URL = env.NEXT_PUBLIC_S3_BUCKET_URL;
 // console.log(`${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`);
 const demoClips: DemoClip[] = [
   {
