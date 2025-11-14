@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <header className="sticky top-0 z-20 backdrop-blur-sm">
@@ -38,13 +40,6 @@ export const Header = () => {
                       />
                     </linearGradient>
                   </defs>
-
-                  {/* Background Diamond Shape (more visible) */}
-                  {/* <path
-                    d="M12 2 L19 12 L12 22 L5 12 Z"
-                    fill="url(#vGradient)"
-                    opacity="0.35"
-                  /> */}
 
                   {/* Complete A shape behind (with apex at top) */}
                   <path
@@ -113,7 +108,7 @@ export const Header = () => {
                 className="btn btn-primary group relative overflow-hidden"
               >
                 <span className="inline-flex items-center">
-                  Log In
+                  {session ? "Dashboard" : "Log In"}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="ml-1 h-4 w-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1"
