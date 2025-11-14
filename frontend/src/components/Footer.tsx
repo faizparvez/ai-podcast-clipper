@@ -181,7 +181,7 @@ export function Footer() {
                   />
                 </svg>
               </div>
-              <span className="text-2xl font-bold text-white">ViralAi</span>
+              <span className="text-2xl font-bold text-white">ViralAI</span>
             </div>
             <p className="mb-6 max-w-md leading-relaxed text-white/60">
               Transform your podcasts into viral clips with AI-powered clipping.

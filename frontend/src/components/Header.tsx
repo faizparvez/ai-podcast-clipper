@@ -80,7 +80,7 @@ export const Header = () => {
                 {/* </div> */}
               </div>
               <span className="bg-gradient-to-b from-[#000000] to-[#001E80] bg-clip-text text-xl font-bold text-transparent">
-                ViralAi
+                ViralAI
               </span>
             </Link>
 
