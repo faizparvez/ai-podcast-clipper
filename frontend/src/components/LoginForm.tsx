@@ -68,21 +68,63 @@ export function LoginForm({
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#183EC2] to-[#001E80]">
               <svg
-                className="h-7 w-7 text-white"
-                fill="none"
-                stroke="currentColor"
+                className="h-6 w-6 text-white"
                 viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
+                <defs>
+                  <linearGradient
+                    id="vGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop
+                      offset="0%"
+                      style={{ stopColor: "#ffffff", stopOpacity: 1 }}
+                    />
+                    <stop
+                      offset="100%"
+                      style={{ stopColor: "#E0E7FF", stopOpacity: 1 }}
+                    />
+                  </linearGradient>
+                </defs>
+
+                {/* Complete A shape behind (with apex at top) */}
                 <path
+                  d="M6 22 L12 4 L18 22"
+                  stroke="url(#vGradient)"
+                  strokeWidth="3"
+                  fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  opacity="0.5"
+                />
+
+                {/* Horizontal bar of A (crossbar) */}
+                <path
+                  d="M8.5 15 L15.5 15"
+                  stroke="url(#vGradient)"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  opacity="0.6"
+                />
+
+                {/* V Shape on top (main focus) */}
+                <path
+                  d="M4 8 L12 22 L20 8"
+                  stroke="url(#vGradient)"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
             <span className="bg-gradient-to-b from-[#000000] to-[#001E80] bg-clip-text text-2xl font-bold text-transparent">
-              ClipMind
+              ViralAI
             </span>
           </div>
         </div>
