@@ -38,11 +38,10 @@ import { ClipDisplay } from "./ClipDisplay";
 import { motion } from "framer-motion";
 import { Footer } from "./Footer";
 import { ProcessingLoader } from "./ProcessingLoader";
-import { S3_BUCKET_URL } from "~/constants";
 
 const DEMO_PODCAST = {
-  filename: "billGatesPodcast.mp4",
-  path: `${S3_BUCKET_URL}/test1/demo/billGatesPodcast.mp4`,
+  filename: "BillGatesPodcast.mp4",
+  path: `https://res.cloudinary.com/dume4rw5s/video/upload/v1765561809/billGatesPodcast_eovdxo.mp4`,
   displayName: "Bill Gates | Raj Shamani (6 min demo)",
 };
 
@@ -173,7 +172,7 @@ export function DashboardClient({
       
       toast.success("Demo podcast loaded!", {
         description: "Review the file and click 'Generate Clips' to try our AI.",
-        duration: 5000,
+        duration: 3000,
       });
 
       // Scroll to the Generate Clips button

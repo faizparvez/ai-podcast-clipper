@@ -3,7 +3,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { S3_BUCKET_URL } from "~/constants";
 
 // Demo clips data
 interface DemoClip {
@@ -13,24 +12,23 @@ interface DemoClip {
   description?: string;
 }
 
-// console.log(`${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`);
 const demoClips: DemoClip[] = [
   {
     id: "demo-1",
     title: "Entrepreneurship Insights",
-    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-1.mp4`,
+    videoUrl: `https://res.cloudinary.com/dume4rw5s/video/upload/v1765569800/clip-1_k8bpvi.mp4`,
     description: "Key moments from startup founder interview",
   },
   {
     id: "demo-2",
     title: "Marketing Strategy",
-    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-2.mp4`,
+    videoUrl: `https://res.cloudinary.com/dume4rw5s/video/upload/v1765569743/clip-2_yuhouz.mp4`,
     description: "Viral marketing tactics revealed",
   },
   {
     id: "demo-3",
     title: "Productivity Tips",
-    videoUrl: `${S3_BUCKET_URL}/test1/demo-clips/clip-3.mp4`,
+    videoUrl: `https://res.cloudinary.com/dume4rw5s/video/upload/v1765569815/clip-3_ahrv52.mp4`,
     description: "Time management secrets from experts",
   },
 ];

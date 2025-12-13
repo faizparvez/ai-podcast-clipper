@@ -7,7 +7,7 @@ import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 interface ProcessingStep {
   id: string;
   label: string;
-  duration: number; // in seconds
+  duration: number;
   description: string;
 }
 
@@ -15,13 +15,13 @@ const PROCESSING_STEPS: ProcessingStep[] = [
   {
     id: "warming-up",
     label: "Warming up AI model",
-    duration: 40,
+    duration: 60,
     description: "Initializing serverless GPU and loading neural networks",
   },
   {
     id: "checking-credits",
     label: "Checking credits",
-    duration: 3,
+    duration: 10,
     description: "Verifying your account balance",
   },
   {
@@ -33,21 +33,28 @@ const PROCESSING_STEPS: ProcessingStep[] = [
   {
     id: "generating-clips",
     label: "Generating clips",
-    duration: 45,
+    duration: 60,
     description: "Creating clips and optimizing for social media",
   },
   {
     id: "finalizing",
     label: "Finalizing",
-    duration: 12,
+    duration: 15,
     description: "Saving clips and updating your dashboard",
   },
 ];
 
+interface PersistedState {
+  elapsedTime: number;
+  progress: number;
+  currentStepIndex: number;
+  isComplete: boolean;
+}
+
 interface ProcessingLoaderProps {
   fileId: string;
   filename: string;
-  status: string; // Accept any string
+  status: string;
   onComplete?: () => void;
 }
 
@@ -57,67 +64,104 @@ export function ProcessingLoader({
   status,
   onComplete,
 }: ProcessingLoaderProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-
-  const currentStep = PROCESSING_STEPS[currentStepIndex];
   const totalDuration = PROCESSING_STEPS.reduce(
     (sum, step) => sum + step.duration,
     0,
   );
 
+  // Restore previous state
+  const persisted: PersistedState | null = (() => {
+    try {
+      const raw = localStorage.getItem(`processing_${fileId}`);
+      return raw ? (JSON.parse(raw) as PersistedState) : null;
+    } catch {
+      return null;
+    }
+  })();
+
+  const [elapsedTime, setElapsedTime] = useState<number>(
+    persisted?.elapsedTime ?? 0,
+  );
+  const [progress, setProgress] = useState<number>(persisted?.progress ?? 0);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(
+    persisted?.currentStepIndex ?? 0,
+  );
+  const [isComplete, setIsComplete] = useState<boolean>(
+    persisted?.isComplete ?? false,
+  );
+
+  const currentStep = PROCESSING_STEPS[currentStepIndex];
+
+  // Persist state
+  useEffect(() => {
+    const state: PersistedState = {
+      elapsedTime,
+      progress,
+      currentStepIndex,
+      isComplete,
+    };
+    localStorage.setItem(`processing_${fileId}`, JSON.stringify(state));
+  }, [elapsedTime, progress, currentStepIndex, isComplete, fileId]);
+
+  // Backend completion
   useEffect(() => {
     if (status === "processed") {
       setProgress(100);
       setIsComplete(true);
-      setTimeout(() => onComplete?.(), 1500);
+
+      setTimeout(() => {
+        localStorage.removeItem(`processing_${fileId}`);
+        onComplete?.();
+      }, 1500);
+
       return;
     }
 
     if (status === "failed" || status === "no credits") {
       setIsComplete(true);
+      localStorage.removeItem(`processing_${fileId}`);
       return;
     }
+  }, [status, fileId, onComplete]);
 
-    if (status !== "processing" && status !== "queued") return;
+  // Main timer logic
+  useEffect(() => {
+    if (!["queued", "processing"].includes(status)) return;
+
     const interval = setInterval(() => {
-      setElapsedTime((prev) => {
-        const newTime = prev + 0.1;
+      setElapsedTime((prevElapsed) => {
+        const newTime = prevElapsed + 0.1;
 
-        // Calculate which step we should be on
-        let accumulatedTime = 0;
-        let stepIndex = 0;
-
+        // Determine step
+        let accum = 0;
+        let stepIdx = currentStepIndex;
         for (let i = 0; i < PROCESSING_STEPS.length; i++) {
-          if (
-            newTime >= accumulatedTime &&
-            newTime < accumulatedTime + PROCESSING_STEPS[i]!.duration
-          ) {
-            stepIndex = i;
+          const step = PROCESSING_STEPS[i];
+          if (!step) continue;
+          if (newTime >= accum && newTime < accum + step.duration) {
+            stepIdx = i;
             break;
           }
-          accumulatedTime += PROCESSING_STEPS[i]!.duration;
+          accum += step.duration;
         }
 
-        setCurrentStepIndex(stepIndex);
+        setCurrentStepIndex((prev) => Math.max(prev, stepIdx));
 
-        // Calculate progress with realistic fluctuations
-        const baseProgress = (newTime / totalDuration) * 100;
-        const fluctuation = Math.sin(newTime * 0.5) * 2; // Adds ±2% fluctuation
-        const newProgress = Math.min(97, baseProgress + fluctuation);
+        // Progress (non-decreasing)
+        const base = (newTime / totalDuration) * 100;
+        const fluctuation = Math.sin(newTime * 0.3) * 1.5;
+        const rawProgress = Math.min(97, base + fluctuation);
 
-        setProgress(newProgress);
+        setProgress((prev) => Math.max(prev, rawProgress));
 
         return newTime;
       });
     }, 100);
 
     return () => clearInterval(interval);
-  }, [status, totalDuration, onComplete]);
+  }, [status, totalDuration, currentStepIndex]);
 
-  // Show success state
+  // ---------------- SUCCESS UI ----------------
   if (status === "processed" && isComplete) {
     return (
       <motion.div
@@ -126,7 +170,7 @@ export function ProcessingLoader({
         className="rounded-2xl border border-[#F1F1F1] bg-gradient-to-br from-[#183EC2]/5 to-[#001E80]/5 p-6"
       >
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#183EC2] to-[#001E80]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#183EC2] to-[#001E80]">
             <CheckCircle2 className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1">
@@ -135,8 +179,7 @@ export function ProcessingLoader({
             </h4>
             <p className="mt-1 text-sm text-[#010D3E]/70">{filename}</p>
             <p className="mt-2 text-sm font-medium text-[#183EC2]">
-              Your clips are ready! Check the &quot;My Clips&quot; tab to view
-              them.
+              Your clips are ready! Check the “My Clips” tab.
             </p>
           </div>
         </div>
@@ -144,16 +187,12 @@ export function ProcessingLoader({
     );
   }
 
-  // Show error state
+  // ---------------- ERROR UI ----------------
   if ((status === "failed" || status === "no credits") && isComplete) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-red-200 bg-red-50 p-6"
-      >
+      <motion.div className="rounded-2xl border border-red-200 bg-red-50 p-6">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
           <div className="flex-1">
@@ -163,32 +202,25 @@ export function ProcessingLoader({
                 : "Processing Failed"}
             </h4>
             <p className="mt-1 text-sm text-red-700">{filename}</p>
-            <p className="mt-2 text-sm text-red-700">
-              {status === "no credits"
-                ? "Please purchase more credits to process this video."
-                : "Something went wrong. Please try uploading again."}
-            </p>
           </div>
         </div>
       </motion.div>
     );
   }
 
-  // Show loading state
+  // ---------------- LOADING UI (RESTORED OLD UI) ----------------
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-[#F1F1F1] bg-white p-6 shadow-sm"
-    >
+    <motion.div className="rounded-2xl border border-[#F1F1F1] bg-white p-6 shadow-sm">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex-1">
           <h4 className="font-semibold text-[#010D3E]">{filename}</h4>
           <p className="mt-1 text-xs text-[#010D3E]/60">
-            Processing video... This may take 3-5 minutes
+            Processing video… This may take 3–5 minutes
           </p>
         </div>
+
+        {/* Progress + Time */}
         <div className="text-right">
           <div className="text-2xl font-bold text-[#183EC2]">
             {Math.round(progress)}%
@@ -204,19 +236,15 @@ export function ProcessingLoader({
       <div className="relative mb-6 h-3 w-full overflow-hidden rounded-full bg-[#EAEEFE]">
         <motion.div
           className="h-full bg-gradient-to-r from-[#183EC2] to-[#001E80] shadow-lg shadow-[#183EC2]/30"
-          initial={{ width: "0%" }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         />
-        {/* Shimmer effect */}
+
+        {/* Shimmer */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
           animate={{ x: ["-100%", "100%"] }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
@@ -228,10 +256,9 @@ export function ProcessingLoader({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
             className="flex items-start gap-3"
           >
-            <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#183EC2]/10 to-[#001E80]/5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#183EC2]/10">
               <Loader2 className="h-4 w-4 animate-spin text-[#183EC2]" />
             </div>
             <div className="flex-1">
@@ -246,7 +273,7 @@ export function ProcessingLoader({
         )}
       </AnimatePresence>
 
-      {/* Steps Progress */}
+      {/* Steps Indicator (1–5) */}
       <div className="mt-6 flex items-center justify-between">
         {PROCESSING_STEPS.map((step, index) => (
           <div key={step.id} className="flex flex-col items-center gap-2">
@@ -273,6 +300,7 @@ export function ProcessingLoader({
                 </span>
               )}
             </div>
+
             <span
               className={`hidden text-xs md:block ${
                 index <= currentStepIndex
@@ -289,9 +317,8 @@ export function ProcessingLoader({
       {/* Tip */}
       <div className="mt-6 rounded-lg border border-[#183EC2]/20 bg-gradient-to-br from-[#EAEEFE]/50 to-[#EAEEFE]/30 p-4">
         <p className="text-sm text-[#010D3E]/70">
-          💡 <span className="font-semibold">Tip:</span> Click the refresh
-          button above to check the latest status, or switch to the &quot;My
-          Clips&quot; tab to see completed clips.
+          💡 <span className="font-semibold">Tip:</span> Click refresh to check
+          the latest status or view completed clips in the “My Clips” tab.
         </p>
       </div>
     </motion.div>
